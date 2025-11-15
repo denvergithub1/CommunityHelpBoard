@@ -9,10 +9,10 @@ library(dplyr)
 library(DT)
 
 # Authenticating for back end link. This can change per country. 
-gs4_auth(path = "saint-lucia-map-426222-a54bdf646c15.json")  
+gs4_auth(path = "....")  
 
 # Private back-end sheet (use Sheet URL)
-Default_Sheet_ID <- "https://docs.google.com/spreadsheets/d/1jn8olkpUh9hykafNt_XJEkb6IpdnKnnS0BdYbF1fyNU/edit?gid=0#gid=0"
+Default_Sheet_ID <- "...."
 
 # UI set up as prescribed by Shiny Site. 
 ui <- fluidPage(
