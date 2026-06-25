@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+  <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lucia Neighborhood Resource Board</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+            <style>
+            /* ── Reset & tokens ───────────────────────────────────────────── */
+            *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+          :root{
+            --sky:#0f4c75;
+              --sky-mid:#1b6ca8;
+              --sky-lite:#e8f4fd;
+              --gold:#f4a41a;
+              --gold-lite:#fff8e6;
+              --green:#1d7a4e;
+              --green-lite:#e6f7ee;
+              --red:#c0392b;
+              --red-lite:#fdecea;
+              --surface:#ffffff;
+              --bg:#f0f4f8;
+              --border:#d8e2ec;
+              --text:#1a2433;
+              --muted:#5a6e83;
+              --radius:12px;
+            --shadow:0 2px 16px rgba(15,76,117,.10);
+            --shadow-lg:0 6px 30px rgba(15,76,117,.15);
+          }
+          html{font-size:16px}
+          body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+          
+          /* ── Scrollbar ────────────────────────────────────────────────── */
+            ::-webkit-scrollbar{width:6px}
+          ::-webkit-scrollbar-track{background:var(--bg)}
+          ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+          
+          /* ── Header ──────────────────────────────────────────────────── */
+            .site-header{
+              background:linear-gradient(135deg,var(--sky) 0%,var(--sky-mid) 100%);
+              color:#fff;padding:0 28px;
+                display:grid;grid-template-columns:1fr auto;align-items:center;
+              gap:16px;min-height:72px;
+              border-bottom:3px solid var(--gold);
+              position:sticky;top:0;z-index:100;
+              box-shadow:0 2px 12px rgba(0,0,0,.18);
+            }
+          .site-header h1{
+            font-family:'Lora',serif;font-size:1.45rem;font-weight:600;
+            letter-spacing:-.2px;line-height:1.2;
+          }
+          .site-header h1 span{color:var(--gold)}
+          .header-meta{font-size:.72rem;opacity:.75;margin-top:3px;font-weight:400}
+          .header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+          
+          /* ── Layout ──────────────────────────────────────────────────── */
+            .app-body{
+              display:grid;
+              grid-template-columns:360px 1fr;
+              min-height:calc(100vh - 75px);
+            }
+          .sidebar{
+            background:var(--surface);
+            border-right:1px solid var(--border);
+            overflow-y:auto;
+            height:calc(100vh - 75px);
+            position:sticky;top:75px;
+          }
+          .main-panel{
+            padding:24px 28px 40px;
+            overflow-y:auto;
+          }
+          
+          /* ── Sidebar sections ─────────────────────────────────────────── */
+            .sb-section{
+              padding:20px 20px;
+              border-bottom:1px solid var(--border);
+            }
+          .sb-section:last-child{border-bottom:none}
+          .sb-title{
+            font-size:.68rem;font-weight:700;letter-spacing:.1em;
+            text-transform:uppercase;color:var(--muted);
+            margin-bottom:14px;display:flex;align-items:center;gap:6px;
+          }
+          .sb-title::after{content:'';flex:1;height:1px;background:var(--border)}
+          
+          /* ── Form controls ────────────────────────────────────────────── */
+            .field{margin-bottom:12px}
+          .field:last-child{margin-bottom:0}
+          .field label{
+            display:block;font-size:.78rem;font-weight:600;
+            color:var(--muted);margin-bottom:5px;
+          }
+          input[type=text],input[type=url],textarea,select{
+            width:100%;padding:9px 12px;
+            border:1.5px solid var(--border);
+            border-radius:8px;
+            font-size:.875rem;font-family:'Sora',sans-serif;
+            background:var(--bg);color:var(--text);
+            transition:border-color .15s,box-shadow .15s;
+            outline:none;
+          }
+          input:focus,textarea:focus,select:focus{
+            border-color:var(--sky-mid);
+            box-shadow:0 0 0 3px rgba(27,108,168,.12);
+            background:#fff;
+          }
+          textarea{resize:vertical;min-height:88px;line-height:1.5}
+          select{cursor:pointer;appearance:none;
+            background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6e83' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat:no-repeat;background-position:right 12px center;
+            padding-right:32px;
+          }
+          
+          /* ── Checkbox toggle ──────────────────────────────────────────── */
+            .toggle-row{
+              display:flex;align-items:center;gap:10px;
+              padding:9px 0;cursor:pointer;user-select:none;
+            }
+          .toggle-row input[type=checkbox]{
+            width:38px;height:22px;appearance:none;
+            background:var(--border);border-radius:11px;
+            position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;
+          }
+          .toggle-row input[type=checkbox]::after{
+            content:'';position:absolute;top:3px;left:3px;
+            width:16px;height:16px;border-radius:50%;background:#fff;
+              transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.2);
+          }
+          .toggle-row input[type=checkbox]:checked{background:var(--sky-mid)}
+          .toggle-row input[type=checkbox]:checked::after{left:19px}
+          .toggle-label{font-size:.83rem;color:var(--muted);font-weight:500}
+          
+          /* ── Media fields (collapsible) ───────────────────────────────── */
+            .media-panel{
+              overflow:hidden;max-height:0;
+              transition:max-height .3s ease,opacity .25s;
+              opacity:0;
+            }
+          .media-panel.open{max-height:200px;opacity:1}
+          .media-inner{
+            padding:12px;background:var(--bg);
+            border-radius:8px;border:1.5px dashed var(--border);
+            margin-top:2px;
+          }
+          
+          /* ── Buttons ──────────────────────────────────────────────────── */
+            .btn{
+              display:inline-flex;align-items:center;justify-content:center;
+              gap:7px;padding:10px 18px;border-radius:8px;border:none;
+              font-size:.85rem;font-weight:600;font-family:'Sora',sans-serif;
+              cursor:pointer;transition:all .15s;white-space:nowrap;
+            }
+          .btn:active{transform:scale(.97)}
+          .btn-primary{
+            background:var(--sky);color:#fff;width:100%;
+              box-shadow:0 2px 8px rgba(15,76,117,.3);
+          }
+          .btn-primary:hover{background:var(--sky-mid);box-shadow:0 4px 12px rgba(15,76,117,.35)}
+          .btn-secondary{background:var(--surface);border:1.5px solid var(--border);color:var(--text)}
+          .btn-secondary:hover{border-color:var(--sky-mid);color:var(--sky-mid);background:var(--sky-lite)}
+          .btn-danger{background:var(--red-lite);border:1.5px solid #f5c6c3;color:var(--red)}
+            .btn-danger:hover{background:#fad3d0}
+                .btn-gold{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(244,164,26,.3)}
+                    .btn-gold:hover{background:#e09510}
+                        .btn-sm{padding:7px 13px;font-size:.78rem;border-radius:7px}
+                      .btn-xs{padding:4px 9px;font-size:.72rem;border-radius:6px}
+                      .btn-icon{width:34px;height:34px;padding:0;border-radius:8px}
+                      .btn-block{width:100%}
+                      
+                      /* ── Sheet-loader section ─────────────────────────────────────── */
+                        .sheet-loader{margin-top:10px}
+                      .sheet-url-block{
+                        display:none;padding:12px;
+                        background:var(--bg);border-radius:8px;
+                        border:1.5px solid var(--border);margin-top:10px;
+                      }
+                      .sheet-url-block.open{display:block}
+                      .hint{font-size:.73rem;color:var(--muted);line-height:1.45;margin-top:5px}
+                      .col-ref{
+                        background:var(--sky-lite);border:1px solid #bcd9f0;
+                        border-radius:7px;padding:9px 12px;
+                        font-size:.74rem;color:var(--sky);font-weight:500;
+                        line-height:1.7;margin-top:12px;
+                      }
+                      .col-ref strong{display:block;margin-bottom:2px;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase}
+                      
+                      /* ── Sponsors strip ───────────────────────────────────────────── */
+                        .sponsors{
+                          background:var(--gold-lite);border:1px solid #f5d98a;
+                          border-radius:8px;padding:10px 13px;
+                          font-size:.74rem;color:#7a5a00;line-height:1.6;
+                        }
+                      .sponsors strong{color:#5a3d00}
+                          
+                          /* ── Filter bar ───────────────────────────────────────────────── */
+                          .filter-bar{
+                            display:flex;align-items:center;gap:10px;
+                            flex-wrap:wrap;margin-bottom:18px;
+                          }
+                        .filter-bar select{flex:1;min-width:160px}
+                        .search-box{flex:2;min-width:180px;position:relative}
+                        .search-box input{padding-left:34px}
+                        .search-box .search-icon{
+                          position:absolute;left:10px;top:50%;transform:translateY(-50%);
+color:var(--muted);pointer-events:none;font-size:.95rem;
+                        }
+                        
+                        /* ── Category pill nav ────────────────────────────────────────── */
+                          .cat-nav{
+                            display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px;
+                          }
+                        .cat-pill{
+                          padding:5px 13px;border-radius:99px;
+                          font-size:.75rem;font-weight:600;cursor:pointer;
+                          border:1.5px solid var(--border);background:var(--surface);
+                          color:var(--muted);transition:all .15s;
+                        }
+                        .cat-pill:hover{border-color:var(--sky-mid);color:var(--sky-mid)}
+                        .cat-pill.active{background:var(--sky);border-color:var(--sky);color:#fff}
+                            .cat-pill .pill-count{
+                              display:inline-block;background:rgba(255,255,255,.25);
+                              border-radius:99px;padding:1px 6px;margin-left:4px;font-size:.7rem;
+                            }
+                          .cat-pill:not(.active) .pill-count{background:var(--bg)}
+                          
+                          /* ── Stats row ────────────────────────────────────────────────── */
+                            .stats-row{
+                              display:grid;grid-template-columns:repeat(4,1fr);
+                              gap:12px;margin-bottom:20px;
+                            }
+                          .stat-card{
+                            background:var(--surface);border:1px solid var(--border);
+                            border-radius:var(--radius);padding:14px 16px;
+                            box-shadow:var(--shadow);
+                          }
+                          .stat-val{font-family:'Lora',serif;font-size:1.6rem;font-weight:600;color:var(--sky);line-height:1}
+                          .stat-label{font-size:.72rem;color:var(--muted);margin-top:4px;font-weight:500}
+                          
+                          /* ── Post cards ───────────────────────────────────────────────── */
+                            .posts-grid{display:flex;flex-direction:column;gap:12px}
+                          .post-card{
+                            background:var(--surface);border:1px solid var(--border);
+                            border-radius:var(--radius);padding:18px 20px;
+                            box-shadow:var(--shadow);
+                            transition:box-shadow .18s,transform .18s;
+                            position:relative;overflow:hidden;
+                          }
+                          .post-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+                          .post-card.emergency{border-left:4px solid var(--red);background:var(--red-lite)}
+                          .post-card.highlight{border-left:4px solid var(--gold);background:var(--gold-lite)}
+                          
+                          .post-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+                          .post-title{font-family:'Lora',serif;font-size:1.05rem;font-weight:600;line-height:1.3;color:var(--text)}
+                          .post-badges{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+                          
+                          .badge{
+                            display:inline-block;font-size:.68rem;font-weight:700;
+                            padding:3px 9px;border-radius:99px;letter-spacing:.03em;
+                          }
+                          .badge-jobs{background:#dbeafe;color:#1e40af}
+                              .badge-food{background:#fef3c7;color:#92400e}
+                                  .badge-education{background:#ede9fe;color:#5b21b6}
+                                      .badge-transport{background:#d1fae5;color:#065f46}
+                                          .badge-emergency{background:var(--red-lite);color:var(--red)}
+                                        .badge-holiday{background:#fef9c3;color:#854d0e}
+                                            .badge-advertisement{background:#f0fdf4;color:#166534}
+                                                .badge-sports{background:#fdf4ff;color:#86198f}
+                                                    .badge-alert{background:var(--red-lite);color:var(--red)}
+                                                  .badge-other{background:var(--bg);color:var(--muted)}
+                                                  .badge-new{background:var(--sky-lite);color:var(--sky);margin-left:2px}
+                                                  
+                                                  .post-desc{
+                                                    font-size:.875rem;color:var(--muted);
+                                                    margin-top:9px;line-height:1.6;
+                                                  }
+                                                  .post-media{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+                                                  .post-media img{max-width:180px;max-height:130px;border-radius:7px;border:1px solid var(--border);object-fit:cover}
+                                                  .post-media audio{height:34px;border-radius:6px;max-width:100%}
+                                                  
+                                                  .post-footer{
+                                                    display:flex;align-items:center;justify-content:space-between;
+                                                    margin-top:12px;flex-wrap:wrap;gap:8px;
+                                                  }
+                                                  .post-meta-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+                                                  .post-ts{font-size:.72rem;color:var(--muted)}
+                                                  
+                                                  /* Stars */
+                                                    .stars{display:flex;gap:2px;cursor:pointer}
+                                                  .star{font-size:1rem;color:#d1d5db;transition:color .1s;line-height:1}
+                                                      .star.on{color:var(--gold)}
+                                                    .star:hover,.star:hover~.star{color:inherit}
+                                                    .stars:hover .star{color:var(--gold)}
+                                                    .stars .star:hover~.star{color:#d1d5db}
+                                                        .rating-label{font-size:.73rem;color:var(--muted);margin-left:4px}
+                                                      
+                                                      /* ── Empty state ──────────────────────────────────────────────── */
+                                                        .empty{
+                                                          text-align:center;padding:60px 20px;
+                                                          color:var(--muted);
+                                                        }
+                                                      .empty-icon{font-size:3rem;margin-bottom:14px;opacity:.5}
+                                                      .empty h3{font-size:1rem;font-weight:600;margin-bottom:6px;color:var(--text)}
+                                                      .empty p{font-size:.85rem}
+                                                      
+                                                      /* ── Pagination ───────────────────────────────────────────────── */
+                                                        .pagination{
+                                                          display:flex;gap:6px;justify-content:center;
+                                                          align-items:center;margin-top:24px;flex-wrap:wrap;
+                                                        }
+                                                      .page-btn{
+                                                        min-width:36px;height:36px;border-radius:8px;
+                                                        border:1.5px solid var(--border);background:var(--surface);
+                                                        color:var(--text);font-size:.82rem;font-weight:600;
+                                                        cursor:pointer;display:flex;align-items:center;justify-content:center;
+                                                        transition:all .15s;
+                                                      }
+                                                      .page-btn:hover{border-color:var(--sky-mid);color:var(--sky-mid)}
+                                                      .page-btn.active{background:var(--sky);border-color:var(--sky);color:#fff}
+                                                          .page-btn:disabled{opacity:.4;cursor:not-allowed}
+                                                        
+                                                        /* ── Toast notifications ──────────────────────────────────────── */
+                                                          #toast-container{
+                                                          position:fixed;bottom:24px;right:24px;
+                                                        display:flex;flex-direction:column;gap:8px;z-index:9999;
+                                                      }
+                                                      .toast{
+                                                        padding:12px 18px;border-radius:10px;
+                                                        font-size:.85rem;font-weight:600;
+                                                        box-shadow:0 4px 20px rgba(0,0,0,.18);
+                                                        display:flex;align-items:center;gap:10px;
+                                                        transform:translateX(120%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+                                                        max-width:300px;
+                                                      }
+                                                      .toast.show{transform:translateX(0)}
+                                                      .toast-success{background:var(--green);color:#fff}
+                                                          .toast-error{background:var(--red);color:#fff}
+                                                              .toast-info{background:var(--sky);color:#fff}
+                                                                  
+                                                                  /* ── Loading overlay ──────────────────────────────────────────── */
+                                                                  .loading-overlay{
+                                                                    position:fixed;inset:0;background:rgba(255,255,255,.75);
+                                                                    display:flex;flex-direction:column;align-items:center;justify-content:center;
+                                                                    z-index:500;display:none;
+                                                                  }
+                                                                .loading-overlay.show{display:flex}
+                                                                .spinner{
+                                                                  width:42px;height:42px;border:4px solid var(--border);
+                                                                  border-top-color:var(--sky-mid);border-radius:50%;
+                                                                  animation:spin .7s linear infinite;
+                                                                }
+                                                                @keyframes spin{to{transform:rotate(360deg)}}
+                                                                .loading-msg{margin-top:14px;font-size:.88rem;color:var(--muted);font-weight:500}
+                                                                
+                                                                /* ── Config modal ─────────────────────────────────────────────── */
+                                                                  .modal-backdrop{
+                                                                    position:fixed;inset:0;background:rgba(10,20,40,.5);
+                                                                    display:none;z-index:800;align-items:center;justify-content:center;
+                                                                    backdrop-filter:blur(2px);
+                                                                  }
+                                                                .modal-backdrop.open{display:flex}
+                                                                .modal{
+                                                                  background:#fff;border-radius:16px;
+                                                                    padding:28px 30px;max-width:520px;width:calc(100% - 40px);
+                                                                  box-shadow:0 20px 60px rgba(0,0,0,.25);
+                                                                  animation:modalIn .25s cubic-bezier(.4,0,.2,1);
+                                                                }
+                                                                @keyframes modalIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+                                                                .modal h2{font-family:'Lora',serif;font-size:1.3rem;margin-bottom:6px}
+                                                                .modal p{font-size:.85rem;color:var(--muted);margin-bottom:20px;line-height:1.55}
+                                                                .modal-actions{display:flex;gap:10px;margin-top:20px}
+                                                                
+                                                                /* ── Config banner (top) ──────────────────────────────────────── */
+                                                                  .config-banner{
+                                                                    background:var(--gold-lite);border-bottom:2px solid var(--gold);
+                                                                    padding:10px 20px;font-size:.82rem;
+                                                                    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+                                                                  }
+                                                                .config-banner.hidden{display:none}
+                                                                .config-banner strong{color:#7a5a00}
+                                                                    .config-banner .cb-actions{display:flex;gap:8px;margin-left:auto}
+                                                                  
+                                                                  /* ── Connection status ────────────────────────────────────────── */
+                                                                    .conn-status{
+                                                                      display:inline-flex;align-items:center;gap:5px;
+                                                                      font-size:.72rem;font-weight:600;
+                                                                      padding:3px 10px;border-radius:99px;
+                                                                    }
+                                                                  .conn-status.local{background:#e2e8f0;color:#475569}
+                                                                      .conn-status.sheets{background:var(--green-lite);color:var(--green)}
+                                                                    .conn-status .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+                                                                    
+                                                                    /* ── Setup guide ──────────────────────────────────────────────── */
+                                                                      .setup-steps{counter-reset:step}
+                                                                    .setup-step{
+                                                                      display:flex;gap:12px;margin-bottom:14px;
+                                                                      font-size:.84rem;line-height:1.55;
+                                                                    }
+                                                                    .setup-step::before{
+                                                                      counter-increment:step;
+                                                                      content:counter(step);
+                                                                      display:flex;align-items:center;justify-content:center;
+                                                                      width:24px;height:24px;min-width:24px;border-radius:50%;
+                                                                      background:var(--sky);color:#fff;font-size:.72rem;font-weight:700;
+                                                                        margin-top:1px;
+                                                                    }
+                                                                    code{
+                                                                      background:var(--bg);padding:2px 6px;border-radius:4px;
+                                                                      font-size:.8rem;font-family:monospace;color:var(--sky);
+                                                                      border:1px solid var(--border);
+                                                                    }
+                                                                    
+                                                                    /* ── Responsive ───────────────────────────────────────────────── */
+                                                                      @media(max-width:900px){
+                                                                        .app-body{grid-template-columns:1fr}
+                                                                        .sidebar{height:auto;position:static;border-right:none;border-bottom:1px solid var(--border)}
+                                                                        .stats-row{grid-template-columns:repeat(2,1fr)}
+                                                                        .site-header{padding:0 16px;min-height:60px}
+                                                                        .site-header h1{font-size:1.15rem}
+                                                                        .main-panel{padding:16px}
+                                                                      }
+                                                                    @media(max-width:500px){
+                                                                      .stats-row{grid-template-columns:repeat(2,1fr)}
+                                                                      .filter-bar{flex-direction:column;align-items:stretch}
+                                                                    }
+                                                                    </style>
+                                                                      </head>
+                                                                      <body>
+                                                                      
+                                                                      <!-- ── Config banner ───────────────────────────────────────────── -->
+                                                                      <div class="config-banner" id="configBanner">
+                                                                      <span>⚡ <strong>Quick setup:</strong> Connect your Google Sheet to save & load posts across devices.</span>
+                                                                      <div class="cb-actions">
+                                                                      <button class="btn btn-sm btn-gold" onclick="openSetupModal()">Connect Sheet</button>
+                                                                      <button class="btn btn-sm btn-secondary" onclick="dismissBanner()">Later</button>
+                                                                      </div>
+                                                                      </div>
+                                                                      
+                                                                      <!-- ── Header ──────────────────────────────────────────────────── -->
+                                                                      <header class="site-header">
+                                                                      <div>
+                                                                      <h1>Lucia <span>Neighborhood</span> Resource Board</h1>
+                                                                      <div class="header-meta">Community resources &amp; needs — shared by neighbors</div>
+                                                                      </div>
+                                                                      <div class="header-actions">
+                                                                      <span class="conn-status local" id="connStatus"><span class="dot"></span> Local</span>
+                                                                      <button class="btn btn-sm btn-gold" onclick="openSetupModal()" title="Google Sheets settings">⚙ Sheets</button>
+                                                                      </div>
+                                                                      </header>
+                                                                      
+                                                                      <!-- ── Loading overlay ─────────────────────────────────────────── -->
+                                                                      <div class="loading-overlay" id="loadingOverlay">
+                                                                      <div class="spinner"></div>
+                                                                      <div class="loading-msg" id="loadingMsg">Loading posts…</div>
+                                                                      </div>
+                                                                      
+                                                                      <!-- ── Setup / Config modal ────────────────────────────────────── -->
+                                                                      <div class="modal-backdrop" id="setupModal">
+                                                                      <div class="modal">
+                                                                      <h2>Connect Google Sheets</h2>
+                                                                      <p>Posts are saved locally in your browser. To sync across devices, connect a Google Sheet. You'll need to create an Apps Script web app that acts as the write endpoint.</p>
+
+    <div id="setupGuide">
+      <div class="setup-steps">
+        <div class="setup-step">Create a Google Sheet with columns: <code>Title</code> <code>Category</code> <code>Description</code> <code>ImageURL</code> <code>AudioURL</code> <code>Rating</code> <code>Timestamp</code></div>
+        <div class="setup-step">Open <strong>Extensions → Apps Script</strong>. Paste the provided <code>doGet</code>/<code>doPost</code> script (see README). Deploy as Web App — "Anyone" can access.</div>
+        <div class="setup-step">Copy your Sheet ID from the URL and your Apps Script Web App URL, and paste both below.</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Google Sheet ID</label>
+      <input type="text" id="cfgSheetId" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms">
+      <p class="hint">Found in the sheet URL: …/spreadsheets/d/<strong>[THIS PART]</strong>/edit</p>
+    </div>
+    <div class="field">
+      <label>Apps Script Web App URL (for writing)</label>
+      <input type="url" id="cfgScriptUrl" placeholder="https://script.google.com/macros/s/…/exec">
+      <p class="hint">Leave blank to use read-only mode (loads posts, can't submit).</p>
+  </div>
+  <div class="field">
+    <label>Google API Key (for reading)</label>
+    <input type="text" id="cfgApiKey" placeholder="AIzaSy…">
+      <p class="hint">Create a key at console.cloud.google.com → Credentials. Enable Sheets API. Restrict to your domain.</p>
+        </div>
+        
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="saveConfig()" style="flex:1">Save &amp; Connect</button>
+            <button class="btn btn-secondary" onclick="closeSetupModal()">Cancel</button>
+              <button class="btn btn-danger btn-sm" onclick="clearConfig()">Disconnect</button>
+                </div>
+                </div>
+                </div>
+                
+                <!-- ── App body ─────────────────────────────────────────────────── -->
+                <div class="app-body">
+                  
+                  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+                  <aside class="sidebar">
+                    
+                    <!-- Post form -->
+                    <div class="sb-section">
+                      <div class="sb-title">Post a Resource or Need</div>
+                        
+                        <div class="field">
+                          <label>Your post title</label>
+                          <input type="text" id="inTitle" placeholder="e.g. Need a Job, Free groceries available…">
+                            </div>
+                            <div class="field">
+                              <label>Category</label>
+                              <select id="inCategory">
+                                <option>Jobs</option>
+                                <option>Food</option>
+                                <option>Education</option>
+                                <option>Transport</option>
+                                <option>Emergency</option>
+                                <option>Holiday</option>
+                                <option>Advertisement</option>
+                                <option>Sports</option>
+                                <option>Alert to correct mistake / report abuse</option>
+                                <option>Other</option>
+                                </select>
+                                </div>
+                                <div class="field">
+                                  <label>Description &amp; contact info</label>
+                                  <textarea id="inDesc" placeholder="Describe the resource or need, and how people can reach you…"></textarea>
+                                    </div>
+                                    
+                                    <label class="toggle-row">
+                                      <input type="checkbox" id="showMedia">
+                                        <span class="toggle-label">Add image or audio link</span>
+                                          </label>
+                                          
+                                          <div class="media-panel" id="mediaPanel">
+                                            <div class="media-inner">
+                                              <div class="field">
+                                                <label>Image URL (optional)</label>
+                                                <input type="url" id="inImage" placeholder="https://…">
+                                                  </div>
+                                                  <div class="field" style="margin-bottom:0">
+                                                    <label>Audio URL (optional)</label>
+                                                    <input type="url" id="inAudio" placeholder="https://…">
+                                                      </div>
+                                                      </div>
+                                                      </div>
+                                                      
+                                                      <button class="btn btn-primary" style="margin-top:14px" onclick="submitPost()">
+                                                        ✦ Submit Post
+                                                      </button>
+                                                        </div>
+                                                        
+                                                        <!-- Sponsors -->
+                                                        <div class="sb-section">
+                                                          <div class="sb-title">Sponsors</div>
+                                                            <div class="sponsors">
+                                                              <strong>🥈 Silver Sponsor</strong><br>JnBaptiste Foundation<br><br>
+                                                              <strong>🥇 Gold Sponsor</strong><br>AGM Network Solution — Advance Caribbean Businesses
+                                                            </div>
+                                                              <p style="font-size:.7rem;color:var(--muted);margin-top:8px;text-align:center">JSur copyright ©2023</p>
+                                                                </div>
+                                                                
+                                                                <!-- Sheet loader (advanced) -->
+                                                                <div class="sb-section">
+                                                                  <div class="sb-title">Data Source</div>
+                                                                    <div style="display:flex;gap:8px;margin-bottom:8px">
+                                                                      <button class="btn btn-secondary btn-sm btn-block" onclick="openSetupModal()">⚙ Configure Sheet</button>
+                                                                        <button class="btn btn-danger btn-sm" onclick="hardReset()" title="Clear all local posts">↺</button>
+                                                                          </div>
+                                                                          <button class="btn btn-secondary btn-sm btn-block" onclick="loadPosts(true)">⟳ Refresh from Sheet</button>
+                                                                            <div class="col-ref" style="margin-top:10px">
+                                                                              <strong>Required Sheet Columns</strong>
+                                                                              Title · Category · Description · ImageURL · AudioURL · Rating · Timestamp
+                                                                            </div>
+                                                                              </div>
+                                                                              
+                                                                              </aside>
+                                                                              
+                                                                              <!-- ── Main panel ────────────────────────────────────────────── -->
+                                                                              <main class="main-panel">
+                                                                                
+                                                                                <!-- Stats row -->
+                                                                                <div class="stats-row" id="statsRow">
+                                                                                  <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Total Posts</div></div>
+                                                                                    <div class="stat-card"><div class="stat-val" id="statToday">0</div><div class="stat-label">Posted Today</div></div>
+                                                                                      <div class="stat-card"><div class="stat-val" id="statEmergency">0</div><div class="stat-label">Emergencies</div></div>
+                                                                                        <div class="stat-card"><div class="stat-val" id="statAvgRating">—</div><div class="stat-label">Avg Rating</div></div>
+                                                                                          </div>
+                                                                                          
+                                                                                          <!-- Filter bar -->
+                                                                                          <div class="filter-bar">
+                                                                                            <div class="search-box">
+                                                                                              <span class="search-icon">🔍</span>
+                                                                                                <input type="text" id="searchInput" placeholder="Search posts…" oninput="renderPosts()">
+                                                                                                  </div>
+                                                                                                  <select id="sortSelect" onchange="renderPosts()">
+                                                                                                    <option value="newest">Newest first</option>
+                                                                                                      <option value="oldest">Oldest first</option>
+                                                                                                        <option value="top-rated">Top rated</option>
+                                                                                                          </select>
+                                                                                                          </div>
+                                                                                                          
+                                                                                                          <!-- Category pill nav -->
+                                                                                                          <div class="cat-nav" id="catNav"></div>
+                                                                                                            
+                                                                                                            <!-- Posts -->
+                                                                                                            <div class="posts-grid" id="postsGrid"></div>
+                                                                                                              
+                                                                                                              <!-- Pagination -->
+                                                                                                              <div class="pagination" id="pagination"></div>
+                                                                                                                
+                                                                                                                </main>
+                                                                                                                </div>
+                                                                                                                
+                                                                                                                <div id="toast-container"></div>
+                                                                                                                  
+                                                                                                                  <script>
+                                                                                                                  // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  State
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                const STORE_KEY = 'lucia_posts_v2';
+                                                                                                                const CFG_KEY   = 'lucia_cfg_v1';
+                                                                                                                const PAGE_SIZE = 10;
+                                                                                                                
+                                                                                                                let state = {
+                                                                                                                  posts: [],
+                                                                                                                  filter: 'All',
+                                                                                                                  page: 1,
+                                                                                                                  cfg: { sheetId:'', scriptUrl:'', apiKey:'' },
+                                                                                                                  bannerDismissed: false,
+                                                                                                                };
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Persistence
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                function loadState(){
+                                                                                                                  try{ state.posts = JSON.parse(localStorage.getItem(STORE_KEY))||[] }catch{}
+                                                                                                                  try{ const c=JSON.parse(localStorage.getItem(CFG_KEY)); if(c) state.cfg=c }catch{}
+                                                                                                                  try{ state.bannerDismissed = localStorage.getItem('lucia_banner')==='1' }catch{}
+                                                                                                                }
+                                                                                                                
+                                                                                                                function saveLocalPosts(){
+                                                                                                                  localStorage.setItem(STORE_KEY, JSON.stringify(state.posts));
+                                                                                                                }
+                                                                                                                
+                                                                                                                function saveCfg(){
+                                                                                                                  localStorage.setItem(CFG_KEY, JSON.stringify(state.cfg));
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Google Sheets API (read)
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                async function fetchFromSheet(){
+                                                                                                                  const {sheetId, apiKey} = state.cfg;
+                                                                                                                  if(!sheetId || !apiKey) return null;
+                                                                                                                  
+                                                                                                                  const range = encodeURIComponent('Sheet1!A:G');
+                                                                                                                  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+                                                                                                                  
+                                                                                                                  const res = await fetch(url);
+                                                                                                                  if(!res.ok) throw new Error(`Sheets API error ${res.status}`);
+                                                                                                                  const data = await res.json();
+                                                                                                                  const rows = data.values || [];
+                                                                                                                  if(rows.length < 2) return [];
+                                                                                                                  
+                                                                                                                  const headers = rows[0].map(h=>h.trim());
+                                                                                                                  return rows.slice(1).map((row,i) => {
+                                                                                                                    const obj = { id: Date.now()+i };
+                                                                                                                    headers.forEach((h,j)=>{ obj[h] = row[j]||'' });
+                                                                                                                    return obj;
+                                                                                                                  });
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Apps Script (write)
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                async function writeToSheet(post){
+                                                                                                                  const {scriptUrl} = state.cfg;
+                                                                                                                  if(!scriptUrl) return false; // local-only mode
+                                                                                                                  
+                                                                                                                  const params = new URLSearchParams({
+                                                                                                                    action: 'append',
+                                                                                                                    Title: post.Title,
+                                                                                                                    Category: post.Category,
+                                                                                                                    Description: post.Description,
+                                                                                                                    ImageURL: post.ImageURL||'',
+                                                                                                                    AudioURL: post.AudioURL||'',
+                                                                                                                    Rating: '',
+                                                                                                                    Timestamp: post.Timestamp,
+                                                                                                                  });
+                                                                                                                  
+                                                                                                                  const res = await fetch(`${scriptUrl}?${params}`);
+                                                                                                                  if(!res.ok) throw new Error(`Script error ${res.status}`);
+                                                                                                                  return true;
+                                                                                                                }
+                                                                                                                
+                                                                                                                async function updateRatingOnSheet(post){
+                                                                                                                  const {scriptUrl} = state.cfg;
+                                                                                                                  if(!scriptUrl) return;
+                                                                                                                  
+                                                                                                                  const params = new URLSearchParams({
+                                                                                                                    action:'rate', Timestamp: post.Timestamp, Rating: post.Rating
+                                                                                                                  });
+                                                                                                                  await fetch(`${scriptUrl}?${params}`).catch(()=>{});
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Load posts
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                async function loadPosts(explicit=false){
+                                                                                                                  const {sheetId, apiKey} = state.cfg;
+                                                                                                                  if(!sheetId || !apiKey){
+                                                                                                                    if(explicit) toast('No Sheet configured — showing local posts.','info');
+                                                                                                                    renderAll(); return;
+                                                                                                                  }
+                                                                                                                  
+                                                                                                                  showLoading('Loading posts from Google Sheet…');
+                                                                                                                  try{
+                                                                                                                    const rows = await fetchFromSheet();
+                                                                                                                    if(rows){
+                                                                                                                      // Merge: sheet is source of truth; preserve local ratings if sheet has none
+                                                                                                                      state.posts = rows.map(r=>({
+                                                                                                                        id: r.Timestamp ? hashStr(r.Timestamp) : Date.now(),
+                                                                                                                        Title: r.Title||'',
+                                                                                                                        Category: r.Category||'Other',
+                                                                                                                        Description: r.Description||'',
+                                                                                                                        ImageURL: r.ImageURL||'',
+                                                                                                                        AudioURL: r.AudioURL||'',
+                                                                                                                        Rating: r.Rating ? parseFloat(r.Rating) : null,
+                                                                                                                        Timestamp: r.Timestamp||new Date().toLocaleString(),
+                                                                                                                      }));
+                                                                                                                      saveLocalPosts();
+                                                                                                                      if(explicit) toast('Posts loaded from Google Sheet ✓','success');
+                                                                                                                    }
+                                                                                                                  }catch(e){
+                                                                                                                    toast(`Could not load from Sheet: ${e.message}`,'error');
+                                                                                                                  }finally{
+                                                                                                                    hideLoading();
+                                                                                                                    renderAll();
+                                                                                                                  }
+                                                                                                                }
+                                                                                                                
+                                                                                                                function hashStr(s){
+                                                                                                                  let h=0; for(let i=0;i<s.length;i++) h=(Math.imul(31,h)+s.charCodeAt(i))|0;
+                                                                                                                  return Math.abs(h);
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Submit post
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                async function submitPost(){
+                                                                                                                  const title = document.getElementById('inTitle').value.trim();
+                                                                                                                  const desc  = document.getElementById('inDesc').value.trim();
+                                                                                                                  const cat   = document.getElementById('inCategory').value;
+                                                                                                                  const img   = document.getElementById('inImage').value.trim();
+                                                                                                                  const aud   = document.getElementById('inAudio').value.trim();
+                                                                                                                  
+                                                                                                                  if(!title){ toast('Please enter a title.','error'); document.getElementById('inTitle').focus(); return; }
+                                                                                                                  if(!desc){  toast('Please enter a description.','error'); document.getElementById('inDesc').focus(); return; }
+                                                                                                                  
+                                                                                                                  const post = {
+                                                                                                                    id: Date.now(),
+                                                                                                                    Title: title,
+                                                                                                                    Category: cat,
+                                                                                                                    Description: desc,
+                                                                                                                    ImageURL: img,
+                                                                                                                    AudioURL: aud,
+                                                                                                                    Rating: null,
+                                                                                                                    Timestamp: new Date().toLocaleString(),
+                                                                                                                  };
+                                                                                                                  
+                                                                                                                  showLoading('Submitting post…');
+                                                                                                                  
+                                                                                                                  let sheetOk = false;
+                                                                                                                  try{ sheetOk = await writeToSheet(post); }
+                                                                                                                  catch(e){ toast(`Sheet write failed: ${e.message} — saved locally.`,'error'); }
+                                                                                                                  
+                                                                                                                  state.posts.unshift(post);
+                                                                                                                  saveLocalPosts();
+                                                                                                                  hideLoading();
+                                                                                                                  
+                                                                                                                  // clear form
+                                                                                                                  ['inTitle','inDesc','inImage','inAudio'].forEach(id=>document.getElementById(id).value='');
+                                                                                                                  document.getElementById('showMedia').checked=false;
+                                                                                                                  document.getElementById('mediaPanel').classList.remove('open');
+                                                                                                                  
+                                                                                                                  toast(sheetOk ? 'Post submitted & saved to Sheet ✓' : 'Post saved locally ✓','success');
+                                                                                                                  state.page=1;
+                                                                                                                  renderAll();
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Rate post
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                function ratePost(id, rating){
+                                                                                                                  const p = state.posts.find(x=>x.id===id);
+                                                                                                                  if(!p) return;
+                                                                                                                  p.Rating = rating;
+                                                                                                                  saveLocalPosts();
+                                                                                                                  updateRatingOnSheet(p);
+                                                                                                                  renderAll();
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Render
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                function renderAll(){
+                                                                                                                  renderStats();
+                                                                                                                  renderCatNav();
+                                                                                                                  renderPosts();
+                                                                                                                }
+                                                                                                                
+                                                                                                                function renderStats(){
+                                                                                                                  const posts = state.posts;
+                                                                                                                  const today = new Date().toLocaleDateString();
+                                                                                                                  const todayCount = posts.filter(p=>p.Timestamp && p.Timestamp.startsWith(today)).length;
+                                                                                                                  // also check locale strings (includes date at start)
+                                                                                                                  const emergencies = posts.filter(p=>p.Category==='Emergency').length;
+                                                                                                                  const rated = posts.filter(p=>p.Rating);
+                                                                                                                  const avg = rated.length ? (rated.reduce((s,p)=>s+(p.Rating||0),0)/rated.length).toFixed(1) : '—';
+                                                                                                                  
+                                                                                                                  document.getElementById('statTotal').textContent = posts.length;
+                                                                                                                  document.getElementById('statToday').textContent = todayCount;
+                                                                                                                  document.getElementById('statEmergency').textContent = emergencies;
+                                                                                                                  document.getElementById('statAvgRating').textContent = avg;
+                                                                                                                }
+                                                                                                                
+                                                                                                                const ALL_CATS = ['All','Highlights','Jobs','Food','Education','Transport','Emergency','Holiday','Advertisement','Sports','Other'];
+                                                                                                                
+                                                                                                                function renderCatNav(){
+                                                                                                                  const counts = {};
+                                                                                                                  state.posts.forEach(p=>{ counts[p.Category]=(counts[p.Category]||0)+1 });
+                                                                                                                  const highlightCount = state.posts.filter(p=>p.Rating>=4||p.Category==='Emergency').length;
+                                                                                                                  
+                                                                                                                  const nav = document.getElementById('catNav');
+                                                                                                                  nav.innerHTML = ALL_CATS.map(cat=>{
+                                                                                                                    const c = cat==='Highlights' ? highlightCount : (cat==='All' ? state.posts.length : (counts[cat]||0));
+                                                                                                                    return `<button class="cat-pill${state.filter===cat?' active':''}" onclick="setFilter('${cat}')">
+                                                                                                                      ${cat}<span class="pill-count">${c}</span>
+                                                                                                                        </button>`;
+                                                                                                                  }).join('');
+                                                                                                                }
+                                                                                                                
+                                                                                                                function setFilter(cat){
+                                                                                                                  state.filter = cat;
+                                                                                                                  state.page = 1;
+                                                                                                                  renderCatNav();
+                                                                                                                  renderPosts();
+                                                                                                                }
+                                                                                                                
+                                                                                                                function renderPosts(){
+                                                                                                                  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+                                                                                                                  const sort   = document.getElementById('sortSelect').value;
+                                                                                                                  let posts = [...state.posts];
+                                                                                                                  
+                                                                                                                  // Filter
+                                                                                                                  if(state.filter==='Highlights'){
+                                                                                                                    posts = posts.filter(p=>p.Rating>=4||p.Category==='Emergency');
+                                                                                                                  } else if(state.filter!=='All'){
+                                                                                                                    posts = posts.filter(p=>p.Category===state.filter);
+                                                                                                                  }
+                                                                                                                  
+                                                                                                                  // Search
+                                                                                                                  if(search){
+                                                                                                                    posts = posts.filter(p=>
+                                                                                                                                           (p.Title||'').toLowerCase().includes(search)||
+                                                                                                                                           (p.Description||'').toLowerCase().includes(search)||
+                                                                                                                                           (p.Category||'').toLowerCase().includes(search)
+                                                                                                                    );
+                                                                                                                  }
+                                                                                                                  
+                                                                                                                  // Sort
+                                                                                                                  if(sort==='oldest')     posts.sort((a,b)=>a.id-b.id);
+                                                                                                                  else if(sort==='top-rated') posts.sort((a,b)=>(b.Rating||0)-(a.Rating||0));
+                                                                                                                  else                    posts.sort((a,b)=>b.id-a.id);
+                                                                                                                  
+                                                                                                                  // Paginate
+                                                                                                                  const total = posts.length;
+                                                                                                                  const pages = Math.max(1, Math.ceil(total/PAGE_SIZE));
+                                                                                                                  if(state.page > pages) state.page=1;
+                                                                                                                  const slice = posts.slice((state.page-1)*PAGE_SIZE, state.page*PAGE_SIZE);
+                                                                                                                  
+                                                                                                                  const grid = document.getElementById('postsGrid');
+                                                                                                                  
+                                                                                                                  if(slice.length===0){
+                                                                                                                    grid.innerHTML=`<div class="empty">
+                                                                                                                      <div class="empty-icon">📋</div>
+                                                                                                                        <h3>${search ? 'No results found' : 'No posts yet'}</h3>
+                                                                                                                        <p>${search ? `No posts match "${esc(search)}". Try different keywords.` : 'Be the first to share a resource or need!'}</p>
+                                                                                                                        </div>`;
+                                                                                                                      document.getElementById('pagination').innerHTML='';
+                                                                                                                      return;
+                                                                                                                  }
+                                                                                                                  
+                                                                                                                  grid.innerHTML = slice.map(p=>postCard(p)).join('');
+                                                                                                                  
+                                                                                                                  // Pagination
+                                                                                                                  const pag = document.getElementById('pagination');
+                                                                                                                  if(pages<=1){ pag.innerHTML=''; return; }
+                                                                                                                  let btns = `<button class="page-btn" onclick="goPage(${state.page-1})" ${state.page<=1?'disabled':''}>‹</button>`;
+                                                                                                                  for(let i=1;i<=pages;i++){
+                                                                                                                    if(pages>7 && Math.abs(i-state.page)>2 && i!==1 && i!==pages){
+                                                                                                                      if(i===2||i===pages-1) btns+=`<span style="padding:0 4px;color:var(--muted)">…</span>`;
+                                                                                                                      continue;
+                                                                                                                    }
+                                                                                                                    btns+=`<button class="page-btn${i===state.page?' active':''}" onclick="goPage(${i})">${i}</button>`;
+                                                                                                                  }
+                                                                                                                  btns+=`<button class="page-btn" onclick="goPage(${state.page+1})" ${state.page>=pages?'disabled':''}>›</button>`;
+                                                                                                                  pag.innerHTML=btns;
+                                                                                                                }
+                                                                                                                
+                                                                                                                function goPage(n){
+                                                                                                                  state.page=n;
+                                                                                                                  renderPosts();
+                                                                                                                  document.querySelector('.main-panel').scrollTo({top:0,behavior:'smooth'});
+                                                                                                                }
+                                                                                                                
+                                                                                                                function badgeClass(cat){
+                                                                                                                  const m={'Jobs':'badge-jobs','Food':'badge-food','Education':'badge-education',
+                                                                                                                    'Transport':'badge-transport','Emergency':'badge-emergency','Holiday':'badge-holiday',
+                                                                                                                    'Advertisement':'badge-advertisement','Sports':'badge-sports',
+                                                                                                                    'Alert to correct mistake / report abuse':'badge-alert','Other':'badge-other'};
+                                                                                                                  return m[cat]||'badge-other';
+                                                                                                                }
+                                                                                                                
+                                                                                                                function postCard(p){
+                                                                                                                  const isEmergency = p.Category==='Emergency';
+                                                                                                                  const isHighlight = p.Rating>=4;
+                                                                                                                  const cls = isEmergency?'emergency':(isHighlight?'highlight':'');
+                                                                                                                  const rating = p.Rating||0;
+                                                                                                                  const stars = [1,2,3,4,5].map(i=>
+                                                                                                                                                  `<span class="star${i<=rating?' on':''}" onclick="ratePost(${p.id},${i})">★</span>`
+                                                                                                                  ).join('');
+                                                                                                                  
+                                                                                                                  const todayStr = new Date().toLocaleDateString();
+                                                                                                                  const isNew = p.Timestamp && p.Timestamp.startsWith(todayStr);
+                                                                                                                  
+                                                                                                                  const media = [
+                                                                                                                    p.ImageURL ? `<img src="${esc(p.ImageURL)}" alt="Post image" onerror="this.style.display='none'">` : '',
+                                                                                                                    p.AudioURL ? `<audio controls src="${esc(p.AudioURL)}"></audio>` : '',
+                                                                                                                  ].filter(Boolean).join('');
+                                                                                                                  
+                                                                                                                  return `<div class="post-card ${cls}">
+                                                                                                                    <div class="post-top">
+                                                                                                                      <div class="post-title">${esc(p.Title)}</div>
+                                                                                                                        <div class="post-badges">
+                                                                                                                          <span class="badge ${badgeClass(p.Category)}">${esc(p.Category)}</span>
+                                                                                                                            ${isNew?`<span class="badge badge-new">New</span>`:''}
+                                                                                                                          </div>
+                                                                                                                            </div>
+                                                                                                                            <div class="post-desc">${esc(p.Description)}</div>
+                                                                                                                              ${media?`<div class="post-media">${media}</div>`:''}
+                                                                                                                            <div class="post-footer">
+                                                                                                                              <div class="post-meta-left">
+                                                                                                                                <div class="stars">${stars}</div>
+                                                                                                                                  <span class="rating-label">${rating?rating+'/5':'Rate this'}</span>
+                                                                                                                                    </div>
+                                                                                                                                    <span class="post-ts">${esc(p.Timestamp)}</span>
+                                                                                                                                      </div>
+                                                                                                                                      </div>`;
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Config modal
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                function openSetupModal(){
+                                                                                                                  document.getElementById('cfgSheetId').value  = state.cfg.sheetId||'';
+                                                                                                                  document.getElementById('cfgScriptUrl').value = state.cfg.scriptUrl||'';
+                                                                                                                  document.getElementById('cfgApiKey').value    = state.cfg.apiKey||'';
+                                                                                                                  document.getElementById('setupModal').classList.add('open');
+                                                                                                                }
+                                                                                                                
+                                                                                                                function closeSetupModal(){
+                                                                                                                  document.getElementById('setupModal').classList.remove('open');
+                                                                                                                }
+                                                                                                                
+                                                                                                                function saveConfig(){
+                                                                                                                  state.cfg.sheetId   = document.getElementById('cfgSheetId').value.trim();
+                                                                                                                  state.cfg.scriptUrl = document.getElementById('cfgScriptUrl').value.trim();
+                                                                                                                  state.cfg.apiKey    = document.getElementById('cfgApiKey').value.trim();
+                                                                                                                  saveCfg();
+                                                                                                                  closeSetupModal();
+                                                                                                                  updateConnStatus();
+                                                                                                                  toast('Configuration saved.','success');
+                                                                                                                  loadPosts(true);
+                                                                                                                }
+                                                                                                                
+                                                                                                                function clearConfig(){
+                                                                                                                  if(!confirm('Disconnect Google Sheet? Local posts will remain.')) return;
+                                                                                                                  state.cfg = {sheetId:'',scriptUrl:'',apiKey:''};
+                                                                                                                  saveCfg();
+                                                                                                                  closeSetupModal();
+                                                                                                                  updateConnStatus();
+                                                                                                                  toast('Disconnected from Google Sheet.','info');
+                                                                                                                }
+                                                                                                                
+                                                                                                                function updateConnStatus(){
+                                                                                                                  const el = document.getElementById('connStatus');
+                                                                                                                  const connected = !!(state.cfg.sheetId && state.cfg.apiKey);
+                                                                                                                  el.className = 'conn-status '+(connected?'sheets':'local');
+                                                                                                                  el.innerHTML = `<span class="dot"></span> ${connected?'Google Sheet':'Local'}`;
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Hard reset / banner
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                function hardReset(){
+                                                                                                                  if(!confirm('Clear all local posts and reset the board? This cannot be undone.')) return;
+                                                                                                                  state.posts=[];
+                                                                                                                  localStorage.removeItem(STORE_KEY);
+                                                                                                                  renderAll();
+                                                                                                                  toast('Board reset.','info');
+                                                                                                                }
+                                                                                                                
+                                                                                                                function dismissBanner(){
+                                                                                                                  state.bannerDismissed=true;
+                                                                                                                  localStorage.setItem('lucia_banner','1');
+                                                                                                                  document.getElementById('configBanner').classList.add('hidden');
+                                                                                                                }
+                                                                                                                
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                //  Utilities
+                                                                                                                // ═══════════════════════════════════════════════════════════════
+                                                                                                                function esc(s){
+                                                                                                                  if(!s) return '';
+                                                                                                                  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, type='success'){
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className=`toast toast-${type}`;
+  const icon = type==='success'?'✓':type==='error'?'✕':'ℹ';
+  t.innerHTML=`<span>${icon}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>t.classList.add('show')); });
+  setTimeout(()=>{
+    t.classList.remove('show');
+    setTimeout(()=>t.remove(), 350);
+  }, 3500);
+}
+
+function showLoading(msg='Loading…'){
+  document.getElementById('loadingMsg').textContent=msg;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+
+function hideLoading(){
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Wire-ups
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('showMedia').addEventListener('change', function(){
+  document.getElementById('mediaPanel').classList.toggle('open', this.checked);
+});
+
+document.getElementById('setupModal').addEventListener('click', function(e){
+  if(e.target===this) closeSetupModal();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closeSetupModal();
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  Init
+// ═══════════════════════════════════════════════════════════════
+loadState();
+updateConnStatus();
+
+if(state.bannerDismissed || (state.cfg.sheetId && state.cfg.apiKey)){
+  document.getElementById('configBanner').classList.add('hidden');
+}
+
+// Load from sheet if configured, else render local
+loadPosts(false);
+</script>
+</body>
+</html>
